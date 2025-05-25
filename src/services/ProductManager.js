@@ -20,37 +20,27 @@ class ProductManager {
     }
 
     async getProducts() {
-        return this.readFile();
-    }
-
-    async getProductById(id) {
-        const products = await this.readFile();
-        return products.find(p => p.id === id);
+        return await this.readFile();
     }
 
     async addProduct(product) {
         const products = await this.readFile();
-        const newProduct = { id: randomUUID(), ...product };
+        const newProduct = {
+            id: randomUUID(),
+            status: true,
+            thumbnails: [],
+            ...product
+        };
         products.push(newProduct);
         await this.writeFile(products);
         return newProduct;
     }
 
-    async updateProduct(id, updates) {
-        const products = await this.readFile();
-        const index = products.findIndex(p => p.id === id);
-        if (index === -1) throw new Error('Producto no encontrado');
-        const updatedProduct = { ...products[index], ...updates, id };
-        products[index] = updatedProduct;
-        await this.writeFile(products);
-        return updatedProduct;
-    }
-
     async deleteProduct(id) {
         const products = await this.readFile();
-        const newProducts = products.filter(p => p.id !== id);
-        await this.writeFile(newProducts);
-        return { success: true };
+        const filtered = products.filter(p => p.id !== id);
+        if (filtered.length === products.length) throw new Error('Producto no encontrado');
+        await this.writeFile(filtered);
     }
 }
 
