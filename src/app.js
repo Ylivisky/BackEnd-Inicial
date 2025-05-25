@@ -12,4 +12,3 @@ app.use('/api/carts', cartsRouter);
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
-
