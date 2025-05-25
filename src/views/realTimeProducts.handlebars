@@ -30,10 +30,15 @@
         <button type="submit">Agregar</button>
     </form>
 
+    <div id="error-msg" style="color:red;"></div>
+
     <script>
         const socket = io();
 
+        const errorMsg = document.getElementById('error-msg');
+
         socket.on('products', (products) => {
+            errorMsg.textContent = '';
             const ul = document.getElementById('product-list');
             ul.innerHTML = '';
             products.forEach(p => {
@@ -44,16 +49,20 @@
             });
         });
 
+        socket.on('error', (msg) => {
+            errorMsg.textContent = msg;
+        });
+
         document.getElementById('add-product-form').addEventListener('submit', e => {
             e.preventDefault();
             const form = e.target;
             const newProduct = {
-                title: form.title.value,
-                description: form.description.value,
-                code: form.code.value,
+                title: form.title.value.trim(),
+                description: form.description.value.trim(),
+                code: form.code.value.trim(),
                 price: Number(form.price.value),
                 stock: Number(form.stock.value),
-                category: form.category.value
+                category: form.category.value.trim()
             };
             socket.emit('addProduct', newProduct);
             form.reset();
