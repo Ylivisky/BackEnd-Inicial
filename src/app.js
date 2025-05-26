@@ -4,8 +4,10 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 const exphbs = require('express-handlebars');
 
+const productsRouter = require('./routes/products.routes.js');
+
 const ProductManager = require('./services/ProductManager');
-const productManager = new ProductManager('data/products.json');
+const productManager = new ProductManager(path.join(__dirname, 'data', 'products.json'));
 
 const app = express();
 const httpServer = createServer(app);
@@ -13,6 +15,8 @@ const io = new Server(httpServer);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/products', productsRouter(io));
 
 app.engine('handlebars', exphbs.engine());
 app.set('view engine', 'handlebars');
@@ -54,7 +58,8 @@ app.post('/api/products', async (req, res) => {
 
         res.status(201).json({ message: 'Producto creado', product: newProduct });
     } catch (error) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error(error);
+        res.status(500).json({ error: error.message});
     }
 });
 

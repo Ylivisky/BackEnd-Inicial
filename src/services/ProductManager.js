@@ -23,6 +23,11 @@ class ProductManager {
         return await this.readFile();
     }
 
+    async getProductById(id) {
+    const products = await this.readFile();
+    return products.find(p => p.id === id);
+}
+
     async addProduct(product) {
         const products = await this.readFile();
         const newProduct = {
@@ -35,6 +40,16 @@ class ProductManager {
         await this.writeFile(products);
         return newProduct;
     }
+
+    async updateProduct(id, updatedFields) {
+    const products = await this.readFile();
+    const index = products.findIndex(p => p.id === id);
+    if (index === -1) throw new Error('Producto no encontrado');
+    products[index] = { ...products[index], ...updatedFields };
+    await this.writeFile(products);
+    return products[index];
+}
+
 
     async deleteProduct(id) {
         const products = await this.readFile();

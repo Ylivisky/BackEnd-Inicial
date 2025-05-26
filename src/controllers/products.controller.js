@@ -1,5 +1,5 @@
 const ProductManager = require('../services/ProductManager');
-const manager = new ProductManager('data/products.json');
+const manager = new ProductManager('src/data/products.json');
 
 const getProducts = async (req, res) => {
     try {
@@ -20,17 +20,34 @@ const getProductById = async (req, res) => {
     }
 };
 
-const createProduct = async (req, res) => {
+const createProduct = async (req, res, io) => {
     try {
-        const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-        if (!title || !description || !code || !price || stock == null || !category) {
+        const { title, description, code, price, stock, category } = req.body;
+
+        if (!title || !description || !code || !price || !stock || !category) {
             return res.status(400).json({ error: 'Faltan campos obligatorios' });
         }
 
-        const product = await manager.addProduct({ title, description, code, price, status, stock, category, thumbnails });
-        res.status(201).json(product);
-    } catch {
-        res.status(500).json({ error: 'Error al crear producto' });
+        const newProduct = {
+            title,
+            description,
+            code,
+            price: Number(price),
+            stock: Number(stock),
+            category,
+            status: true,
+            thumbnails: []
+        };
+
+        await manager.addProduct(newProduct);
+
+        const products = await manager.getProducts();
+        io.emit('products', products);
+
+        res.status(201).json({ message: 'Producto creado', product: newProduct });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 

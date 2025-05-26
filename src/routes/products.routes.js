@@ -8,10 +8,14 @@ const {
     deleteProduct
 } = require('../controllers/products.controller');
 
-router.get('/', getProducts);
-router.get('/:pid', getProductById);
-router.post('/', createProduct);
-router.put('/:pid', updateProduct);
-router.delete('/:pid', deleteProduct);
+module.exports = (io) => {
+    const router = express.Router();
 
-module.exports = router;
+    router.get('/', getProducts);
+    router.get('/:pid', getProductById);
+    router.post('/', (req, res) => createProduct(req, res, io));
+    router.put('/:pid', updateProduct);
+    router.delete('/:pid', deleteProduct);
+
+    return router;
+};
