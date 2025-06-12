@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Carrito</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .cart-item h2 {
+            margin: 0 0 5px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: green;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .empty {
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Carrito {{cart._id}}</h1>
+
+    {{#if cart.products.length}}
+        {{#each cart.products}}
+            <div class="cart-item">
+                <h2>{{this.product.title}}</h2>
+                <p>Cantidad: {{this.quantity}}</p>
+                <p>Precio unitario: <span class="price">${{this.product.price}}</span></p>
+                <p>Total: <span class="price">${{multiply this.quantity this.product.price}}</span></p>
+            </div>
+        {{/each}}
+
+        <div class="total">
+            Total del carrito: <span class="price">${{total}}</span>
+        </div>
+    {{else}}
+        <p class="empty">No hay productos en el carrito.</p>
+    {{/if}}
+
+    <a class="back-link" href="/products">← Volver a productos</a>
+</body>
+
+</html>

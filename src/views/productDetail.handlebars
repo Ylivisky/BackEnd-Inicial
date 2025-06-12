@@ -1,0 +1,40 @@
+<h1>{{product.title}}</h1>
+<p>{{product.description}}</p>
+<p>Precio: ${{product.price}}</p>
+<p>Categoría: {{product.category}}</p>
+<p>Stock: {{product.stock}}</p>
+<p>Status: {{#if product.status}}Activo{{else}}Inactivo{{/if}}</p>
+
+<form id="addToCartForm" method="POST">
+    <label for="cartSelect">Selecciona un carrito:</label>
+    <select id="cartSelect" name="cartId" required onchange="updateFormAction(this)">
+        <option value="">-- Elige un carrito --</option>
+        {{#each carts}}
+            <option value="{{this._id}}">{{this._id}}</option>
+        {{/each}}
+    </select>
+
+    <label for="quantity">Cantidad:</label>
+    <input type="number" id="quantity" name="quantity" value="1" min="1" />
+
+    <button type="submit" disabled id="submitBtn">Agregar al carrito</button>
+</form>
+
+<a href="/products">Volver a productos</a>
+
+<script>
+const productId = '{{product._id}}';
+
+function updateFormAction(select) {
+    const selectedCartId = select.value;
+    const form = document.getElementById('addToCartForm');
+    const submitBtn = document.getElementById('submitBtn');
+    if(selectedCartId) {
+        form.action = `/api/carts/${selectedCartId}/products/${productId}`;
+        submitBtn.disabled = false;
+    } else {
+        form.action = '#';
+        submitBtn.disabled = true;
+    }
+}
+</script>
