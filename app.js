@@ -41,16 +41,22 @@ app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/', viewsRouter)
 
-io.on('connection', socket => {
-    socket.on('new-product', async productData => {
-        try {
-            const { ProductModel } = await import('./src/models/product.model.js')
+io.on('connection', async socket => {
+    try {
+        const { ProductModel } = await import('./src/models/product.model.js')
+        const products = await ProductModel.find()
+        socket.emit('products', products)
+
+        socket.on('new-product', async productData => {
             await ProductModel.create(productData)
-            const products = await ProductModel.find()
-            io.emit('products', products)
-        } catch { }
-    })
+            const updatedProducts = await ProductModel.find()
+            io.emit('products', updatedProducts)
+        })
+    } catch (error) {
+        console.error('Error en conexión Socket.io:', error)
+    }
 })
+
 
 const PORT = process.env.PORT || 8080
 server.listen(PORT)

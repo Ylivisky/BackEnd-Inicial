@@ -72,5 +72,8 @@ router.get('/carts/:cid', async (req, res) => {
     }
 })
 
+router.get('/realtimeproducts', (req, res) => {
+    res.render('realtimeProducts')
+})
 
 export default router
